@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import messagebox
 import json
 import hashlib
+import main
 
 
 class LoginGUI:
@@ -89,10 +90,7 @@ class LoginGUI:
 
         if any(user['username'] == username.lower() and
                user['password'] == hashed_password for user in user_accounts):
-            tk.messagebox.showinfo("Log In", f"Logging in as {username}. "
-                                             f"Nothing for now, but stay "
-                                             f"tuned for "
-                                             f"Milestone #2!")
+            self.main_GUI = main.MainGUI()
             self.win_login.destroy()
 
         if not any(user['username'] == username.lower() for
