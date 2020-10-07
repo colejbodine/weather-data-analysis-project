@@ -5,6 +5,8 @@ from tkinter import *
 from tkinter import messagebox
 import tkinter as tk
 import json
+import os
+import hashlib
 
 
 class AccountGUI:
@@ -43,9 +45,14 @@ class AccountGUI:
 
         # Create the password widgets.
         self.win_create.lbl_password_guide = tk.Label(self.win_create,
-                                                      text="Create a password of at least nine (9) characters, "
-                                                           "that contains at least one digit, one uppercase, "
-                                                           "and one lowercase letter.",
+                                                      text="Create a password "
+                                                           "of at least nine "
+                                                           "(9) characters, "
+                                                           "that contains at "
+                                                           "least one digit, "
+                                                           "one uppercase, "
+                                                           "and one lowercase "
+                                                           "letter.",
                                                       wraplength=200)
         self.win_create.lbl_password_guide.grid(row=1, column=0, columnspan=2)
 
@@ -57,7 +64,7 @@ class AccountGUI:
         self.win_create.entry_password = tk.Entry(self.win_create,
                                                   width=20,
                                                   justify="right",
-                                                  font=("Helvetica", 10))
+                                                  show="*")
         self.win_create.entry_password.grid(row=2, column=1)
 
         self.win_create.btn_create = tk.Button(self.win_create,
@@ -74,23 +81,34 @@ class AccountGUI:
         self.win_create.lift()
 
     def create_account(self):
-        """ Create user account """
+        """Create a user account."""
 
         password = self.win_create.entry_password.get()
         username = self.win_create.entry_username.get()
 
+        # If a file does not exist for user accounts, create one with
+        # placeholder data.
+        if not os.path.isfile("accounts.json"):
+            acct_file = open("accounts.json", "w")
+            json.dump([{"username": "demo", "password": "Password123"}],
+                      acct_file)
+            acct_file.close()
+
         try:
             acct_file = open("accounts.json", "r")
             user_accounts = json.load(acct_file)
-        except IOError:
+        except FileNotFoundError:
             print(f"File {acct_file} does not exist.")
 
         def validate_username(username):
             """Check to see if the username is taken."""
-            if not any(user['username'] == username.lower() for user in user_accounts):
+            if not any(user['username'] == username.lower() for
+                       user in user_accounts):
                 return True
             else:
-                tk.messagebox.showinfo("Invalid Username", f"The username {username} is already taken.")
+                tk.messagebox.showinfo("Invalid Username",
+                                       f"The username {username} is already "
+                                       f"taken.")
 
         def validate_password(password):
             """Validate user's password."""
@@ -112,12 +130,16 @@ class AccountGUI:
             if long_enough and has_lower and has_upper and has_digit:
                 return True
             else:
-                tk.messagebox.showinfo("Invalid Password", f"{password} is not a valid password.")
+                tk.messagebox.showinfo("Invalid Password", f"{password} is "
+                                                           f"not a valid "
+                                                           f"password.")
 
         if validate_username(username) and validate_password(password):
-            user_accounts.append({'username': username.lower(), 'password': password})
-            tk.messagebox.showinfo("User Account", "Account Creation Successful!")
-            print(user_accounts)
+            hashed_password = hashlib.sha256(str.encode(password)).hexdigest()
+            user_accounts.append({'username': username.lower(),
+                                  'password': hashed_password})
+            tk.messagebox.showinfo("User Account", "Account Creation "
+                                                   "Successful!")
             acct_file.close()
 
             acct_file = open("accounts.json", 'w')
