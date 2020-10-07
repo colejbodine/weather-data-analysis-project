@@ -9,7 +9,7 @@ import os
 import hashlib
 
 
-class AccountGUI:
+class CreateGUI:
     """A class containing the create account GUI"""
 
     def __init__(self):

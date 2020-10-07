@@ -5,7 +5,7 @@ from tkinter import *
 import tkinter as tk
 import create
 import login
-
+import main
 
 # home window
 class HomeGUI:
@@ -74,13 +74,14 @@ class HomeGUI:
         self.btn_login.config(state=DISABLED)
 
         # Create an account creation GUI
-        self.acct_GUI = create.AccountGUI()
+        self.acct_GUI = create.CreateGUI()
 
         # Wait for the window to be destroyed.
         self.acct_GUI.win_create.wait_window()
 
         # Enable login button again.
         self.btn_login.config(state=NORMAL)
+        self.btn_create_acct.config(state=NORMAL)
 
     def log_in(self):
         # Disable the buttons
@@ -90,7 +91,7 @@ class HomeGUI:
         # Create an account creation GUI
         self.login_GUI = login.LoginGUI()
 
-        # Wait for the window to be destroyed.
+        # Wait for the windows  to be destroyed.
         self.login_GUI.win_login.wait_window()
 
         # Enable login and create buttons again.
@@ -98,4 +99,7 @@ class HomeGUI:
         self.btn_create_acct.config(state=NORMAL)
 
 
+
 dataProgram = HomeGUI()
+
+################################################################################
