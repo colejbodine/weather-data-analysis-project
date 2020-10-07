@@ -7,6 +7,7 @@ import create
 import login
 import main
 
+
 # home window
 class HomeGUI:
     """A class holding the home window."""
@@ -99,7 +100,4 @@ class HomeGUI:
         self.btn_create_acct.config(state=NORMAL)
 
 
-
 dataProgram = HomeGUI()
-
-################################################################################
