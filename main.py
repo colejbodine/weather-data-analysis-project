@@ -3,6 +3,7 @@
 
 from tkinter import *
 import tkinter as tk
+import select
 
 
 class MainGUI:
@@ -43,22 +44,30 @@ class MainGUI:
         self.win_main.btn_1 = tk.Button(self.win_main,
                                         text="Barometric Pressure and "
                                              "Temperature",
-                                        width=30)
+                                        width=30,
+                                        command=self.open_selection_gui)
         self.win_main.btn_1.grid(row=2, column=0)
 
         self.win_main.btn_2 = tk.Button(self.win_main,
                                         text="Barometric Pressure and Wind "
                                              "Speed",
-                                        width=30)
+                                        width=30,
+                                        command=self.open_selection_gui)
         self.win_main.btn_2.grid(row=2, column=1)
 
         self.win_main.btn_3 = tk.Button(self.win_main,
                                         text="Barometric Pressure and Sky "
                                              "Cover",
-                                        width=30)
+                                        width=30,
+                                        command=self.open_selection_gui)
         self.win_main.btn_3.grid(row=3, column=0)
 
         self.win_main.btn_4 = tk.Button(self.win_main,
                                         text="Temperature and Dew Point",
-                                        width=30)
+                                        width=30,
+                                        command=self.open_selection_gui)
         self.win_main.btn_4.grid(row=3, column=1)
+
+    def open_selection_gui(self):
+        """This function opens up the selection gui."""
+        self.select_GUI = select.SelectGUI()
