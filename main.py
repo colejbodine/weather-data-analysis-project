@@ -1,4 +1,4 @@
-# home.py
+# main.py
 # This file holds the Main GUI that accesses the weather station data.
 
 from tkinter import *
