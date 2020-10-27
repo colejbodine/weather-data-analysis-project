@@ -15,17 +15,15 @@ class SelectGUI:
 
         # Create variables
         self.filename = 'Data_2010_thru_2018.txt'
-        self.current_date = 0
         self.dates = []
 
         # Read in the file and append each date to dates
         with open(self.filename, 'r') as f:
             next(f)
             for line in f:
-                self.date = line[0:4] + " " + line[4:6] + " " + line[6:8]
-                if self.date != self.current_date:
-                    self.dates.append(self.date)
-                self.current_date = self.date
+                self.date = line[0:4] + " " + line[4:6] + " " + line[6:8] + " "\
+                            + line[8:10] + ":" + line[10:12]
+                self.dates.append(self.date)
 
         # Create the window
         self.win_select = tk.Tk()

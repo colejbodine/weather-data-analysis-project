@@ -3,7 +3,10 @@
 
 from tkinter import *
 import tkinter as tk
-import select
+import select_bp_t
+import select_bp_ws
+import select_bp_sc
+import select_t_dp
 
 
 class MainGUI:
@@ -45,29 +48,41 @@ class MainGUI:
                                         text="Barometric Pressure and "
                                              "Temperature",
                                         width=30,
-                                        command=self.open_selection_gui)
+                                        command=self.open_select_bp_t_gui)
         self.win_main.btn_1.grid(row=2, column=0)
 
         self.win_main.btn_2 = tk.Button(self.win_main,
                                         text="Barometric Pressure and Wind "
                                              "Speed",
                                         width=30,
-                                        command=self.open_selection_gui)
+                                        command=self.open_select_bp_ws_gui)
         self.win_main.btn_2.grid(row=2, column=1)
 
         self.win_main.btn_3 = tk.Button(self.win_main,
                                         text="Barometric Pressure and Sky "
                                              "Cover",
                                         width=30,
-                                        command=self.open_selection_gui)
+                                        command=self.open_select_bp_sc_gui)
         self.win_main.btn_3.grid(row=3, column=0)
 
         self.win_main.btn_4 = tk.Button(self.win_main,
                                         text="Temperature and Dew Point",
                                         width=30,
-                                        command=self.open_selection_gui)
+                                        command=self.open_select_t_dp_gui)
         self.win_main.btn_4.grid(row=3, column=1)
 
-    def open_selection_gui(self):
+    def open_select_bp_t_gui(self):
         """This function opens up the selection gui."""
-        self.select_GUI = select.SelectGUI()
+        self.select_bp_t_GUI = select_bp_t.SelectBPTGUI()
+
+    def open_select_bp_ws_gui(self):
+        """This function opens up the selection gui."""
+        self.select_bp_ws_GUI = select_bp_ws.SelectBPWSGUI()
+
+    def open_select_bp_sc_gui(self):
+        """This function opens up the selection gui."""
+        self.select_bp_sc_GUI = select_bp_sc.SelectBPSCGUI()
+
+    def open_select_t_dp_gui(self):
+        """This function opens up the selection gui."""
+        self.select_t_dp_GUI = select_t_dp.SelectTDPGUI()
