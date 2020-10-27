@@ -5,6 +5,9 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
+import matplotlib.pyplot as plt
+import numpy as np
+import datetime
 
 
 class SelectBPSCGUI:
@@ -77,33 +80,58 @@ class SelectBPSCGUI:
                                     command=self.get_values)
         self.btn_select.grid(row=3, column=1)
 
-    # Test function  get indices from Comboboxes. This will be used later in
-    # conjunction with logical statements to gather the correct data.
     def get_values(self):
         # Create variables
         self.filename = 'Data_2010_thru_2018.txt'
         self.file = open(self.filename, 'r')
         self.lines = self.file.readlines()
         val1 = self.opt1.get()
-        val2 = self.opt1.get()
+        val2 = self.opt2.get()
         ind1 = self.opt1.current()
         ind2 = self.opt2.current()
-        bp = 0
-        sc = 0
-        date = 0
+        bps = []
+        scs = []
+        dates = []
 
-        # Demonstration output
-        print(f"Printing values for Barometric Pressure and Sky Cover from "
-              f"line {val1} to {val2}")
-        self.lines = self.lines[(ind1+1):ind2]
+        # Gather range for data
+        self.lines = self.lines[(ind1 + 1):ind2]
 
-        # Store bp, sc and date
+        # Store bp, temp and date
         for line in self.lines:
-            date = line[0:12].strip()
-            bp = line[85:92].strip()
-            sc = line[25:29].strip()
-            print(f"Date: {date}")
-            print(f"BP: {bp}")
-            print(f"Sky Cover: {sc}")
-            print("\t")
+            bp = line.split(' ')[23]
+            sc = line.split(' ')[5]
+            date = datetime.datetime(int(line[0:4]), int(line[4:6]),
+                                     int(line[6:8]), int(line[8:10]),
+                                     int(line[10:12]))
+            # Ignore invalid variables and append valid ones to correct lists.
+            if '*' not in bp and '*' not in sc:
+                dates.append(date)
+                bps.append(getdouble(bp))
+                scs.append(sc)
 
+        # Create plot variables
+        x = np.array(dates)
+        print(x)
+        y1 = np.array(bps)
+        print(y1)
+        y2 = np.array(scs)
+        print(y2)
+
+        fig, ax1 = plt.subplots()
+
+        # Create a second y-axis along the same x-axis
+        ax2 = ax1.twinx()
+
+        # Plot axes
+        ax2 = ax1.twinx()
+        ax1.plot(x, y1, 'g-', label="Barometric Pressure")
+        ax2.plot(x, y2, 'b-', label="Sky Cover")
+
+        # Set labels
+        ax1.set_xlabel("Date")
+        ax1.set_ylabel("Barometric Pressure", color='g')
+        ax2.set_ylabel("Sky Cover", color='b')
+
+        # Create plot
+        plt.title(f"Barometric Pressure vs Sky Cover from {val1} to {val2}")
+        plt.show()

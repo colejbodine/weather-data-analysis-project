@@ -6,6 +6,8 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 import matplotlib.pyplot as plt
+import numpy as np
+import datetime
 
 
 class SelectBPTGUI:
@@ -77,34 +79,42 @@ class SelectBPTGUI:
                                     command=self.get_values)
         self.btn_select.grid(row=3, column=1)
 
-    # Test function  get indices from Comboboxes. This will be used later in
-    # conjunction with logical statements to gather the correct data.
     def get_values(self):
         # Create variables
         self.filename = 'Data_2010_thru_2018.txt'
         self.file = open(self.filename, 'r')
         self.lines = self.file.readlines()
         val1 = self.opt1.get()
-        val2 = self.opt1.get()
+        val2 = self.opt2.get()
         ind1 = self.opt1.current()
         ind2 = self.opt2.current()
-        bp = []
-        t = []
-        date = []
+        bps = []
+        ts = []
+        dates = []
 
         # Gather range for data
         self.lines = self.lines[(ind1 + 1):ind2]
 
         # Store bp, temp and date
         for line in self.lines:
-            date.append(int(line[0:12]))
-            bp.append(getdouble(line[84:91]))
-            t.append(getdouble(line[78:84]))
+            bp = line.split(' ')[23]
+            t = line.split(' ')[22]
+            date = datetime.datetime(int(line[0:4]), int(line[4:6]),
+                                     int(line[6:8]), int(line[8:10]),
+                                     int(line[10:12]))
+            # Ignore invalid variables and append valid ones to correct lists.
+            if '*' not in bp and '*' not in t:
+                dates.append(date)
+                bps.append(getdouble(bp))
+                ts.append(getdouble(t))
 
         # Create plot variables
-        x = date
-        y1 = bp
-        y2 = t
+        x = np.array(dates)
+        print(x)
+        y1 = np.array(bps)
+        print(y1)
+        y2 = np.array(ts)
+        print(y2)
 
         fig, ax1 = plt.subplots()
 
@@ -112,6 +122,7 @@ class SelectBPTGUI:
         ax2 = ax1.twinx()
 
         # Plot axes
+        ax2 = ax1.twinx()
         ax1.plot(x, y1, 'g-', label="Barometric Pressure")
         ax2.plot(x, y2, 'b-', label="Temperature")
 
@@ -121,4 +132,5 @@ class SelectBPTGUI:
         ax2.set_ylabel("Temperature", color='b')
 
         # Create plot
+        plt.title(f"Barometric Pressure vs Temperature from {val1} to {val2}")
         plt.show()
