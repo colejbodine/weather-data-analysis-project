@@ -1,10 +1,15 @@
 # select_bp_ws.py
 # This file allows the user to select from the range of dates what they would
-# like to view and prints information about barometric pressure and wind speed.
+# like to view and prints a graph containing barometric pressure and wind speed
+# over that span.
 
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
+import matplotlib.pyplot as plt
+import numpy as np
+import datetime
 
 
 class SelectBPWSGUI:
@@ -14,16 +19,16 @@ class SelectBPWSGUI:
         """Initialize the GUI"""
 
         # Create variables
-        self.filename = 'Data_2010_thru_2018.txt'
+        self.filename = 'Data_10_Years_ALL_NEW.txt'
         self.dates = []
 
         # Read in the file and append each date to dates
         with open(self.filename, 'r') as f:
-            next(f)
             for line in f:
-                self.date = line[0:4] + " " + line[4:6] + " " + line[6:8] + " "\
-                            + line[8:10] + ":" + line[10:12]
+                self.date = line[13:17] + " " + line[17:19] + " " + line[19:21]\
+                            + " " + line[21:23] + ":" + line[23:25]
                 self.dates.append(self.date)
+        f.close()
 
         # Create the window
         self.win_select = tk.Tk()
@@ -49,7 +54,8 @@ class SelectBPWSGUI:
 
         # Create description label
         self.lbl_desc = tk.Label(self.win_select,
-                                 text="Select a range of dates (YYYY MM DD):",
+                                 text="Select a range of dates (YYYY MM DD "
+                                      "HH:MM):",
                                  font=("Arial", 12))
         self.lbl_desc.grid(row=1, column=1)
 
@@ -76,32 +82,58 @@ class SelectBPWSGUI:
                                     command=self.get_values)
         self.btn_select.grid(row=3, column=1)
 
-    # Test function  get indices from Comboboxes. This will be used later in
-    # conjunction with logical statements to gather the correct data.
     def get_values(self):
         # Create variables
-        self.filename = 'Data_2010_thru_2018.txt'
+        self.filename = 'Data_10_Years_ALL_NEW.txt'
         self.file = open(self.filename, 'r')
         self.lines = self.file.readlines()
         val1 = self.opt1.get()
-        val2 = self.opt1.get()
+        val2 = self.opt2.get()
         ind1 = self.opt1.current()
         ind2 = self.opt2.current()
-        bp = 0
-        ws = 0
-        date = 0
+        bps = []
+        wss = []
+        dates = []
 
-        # Demonstration output
-        print(f"Printing values for Barometric Pressure and Sky Cover from "
-              f"line {val1} to {val2}")
-        self.lines = self.lines[(ind1 + 1):ind2]
+        if val1 < val2:
+            # Gather range for data
+            self.lines = self.lines[ind1:ind2]
 
-        # Store bp, sc and date
-        for line in self.lines:
-            date = line[0:12].strip()
-            bp = line[85:92].strip()
-            ws = line[17:19].strip()
-            print(f"Date: {date}")
-            print(f"BP: {bp}")
-            print(f"Wind Speed: {ws}")
-            print("\t")
+            # Store bp, temp and date
+            for line in self.lines:
+                bp = line[106:112]
+                ws = line[30:33].strip()
+                date = datetime.datetime(int(line[13:17]), int(line[17:19]),
+                                         int(line[19:21]), int(line[21:23]),
+                                         int(line[23:25]))
+                # Ignore invalid variables and append valid ones to correct lists.
+                if '*' not in bp and '*' not in ws:
+                    dates.append(date)
+                    bps.append(getdouble(bp))
+                    wss.append(getint(ws))
+
+            # Create plot variables
+            x = np.array(dates)
+            print(x)
+            y1 = np.array(bps)
+            print(y1)
+            y2 = np.array(wss)
+            print(y2)
+
+            # Create graph, plot first axis.
+            fig, ax1 = plt.subplots()
+            ax1.plot(x, y1, 'g-', label="Barometric Pressure")
+            ax1.set_xlabel("Date")
+            ax1.set_ylabel("Barometric Pressure", color='g')
+
+            # Create second axis.
+            ax2 = ax1.twinx()
+            ax2.plot(x, y2, 'b-', label="Wind Speed")
+            ax2.set_ylabel("Wind Speed", color='b')
+
+            # Show graph.
+            plt.title(f"Barometric Pressure vs Wind Speed from {val1} to {val2}")
+            plt.show()
+        else:
+            tk.messagebox.showinfo("Select Dates", "Dates must be in "
+                                                   "ascending order.")
